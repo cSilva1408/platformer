@@ -193,6 +193,9 @@ public class Level {
 	}
 	
 	private void addGas(int col, int row, Map map, int numSquaresToFill, ArrayList<Gas> placedThisRound) {
+	// Pre: col and row are in bounds, map and placedThisRound are not null, numSquaresToFill > 0
+	// Post: Gas is added to empty nearby tiles and placedThisRound is updated
+
 		Gas g = new Gas(col, row, tileSize, tileset.getImage("GasOne"), this, 0);
 		map.addTile(col, row, g);
 		placedThisRound.add(g);
@@ -201,7 +204,7 @@ public class Level {
 		for (int a = 0; a < placedThisRound.size(); a++) {
 			col = placedThisRound.get(a).getCol();
 			row = placedThisRound.get(a).getRow();
-			
+
 			int[][] checkTiles = {
 				{col, row - 1}, // Top
 				{col + 1, row - 1}, // Top Right
@@ -225,15 +228,17 @@ public class Level {
 					numSquaresToFill -= 1;
 				}
 			}
-			
+
 			if (!(numSquaresToFill > 0)) {
 				break;
 			}
 		}
 	}
 
-
 	private void water(int col, int row, Map map, int fullness) {
+		// Pre: col and row are valid, map is not null, and fullness is between 0 and 3
+		// Post: Water tile is placed and spreads to valid nearby tiles if possible
+
 		String waterLevel = "";
 		if (fullness == 3) {
 			waterLevel = "Full_water";
@@ -248,7 +253,7 @@ public class Level {
 		Water w = new Water(col, row, tileSize, tileset.getImage(waterLevel), this, fullness);
 		map.addTile(col, row, w);
 
-        //check if we can go down
+		// check if we can go down
 		if (row + 1 < map.getTiles()[0].length && !map.getTiles()[col][row + 1].isSolid()) {
 			water(col, row + 1, map, 0);
 
@@ -256,25 +261,25 @@ public class Level {
 			if (fullness == 0 && row - 1 > 0 && (map.getTiles()[col][row - 1] instanceof Water)) {
 				water(col, row, map, 3);
 			}
-			//if we can’t go down go left and right.
-			//right
+			// if we can’t go down go left and right
+			// right
 			if (col + 1 < map.getTiles().length && !(map.getTiles()[col + 1][row] instanceof Water) && !map.getTiles()[col + 1][row].isSolid()) {
-				if (fullness > 1) {
+				if (fullness >= 2) {
 					water(col + 1, row, map, fullness - 1);
+				} else {
+					water(col + 1, row, map, fullness);
 				}
 			}
-			//left
-			if (col - 1 >= 0 && !(map.getTiles()[col - 1][row] instanceof Water) && !map.getTiles()[col - 1][row].isSolid()) {
-				if (fullness > 1) {
+			// left
+			if (col - 1 > 0 && !(map.getTiles()[col - 1][row] instanceof Water) && !map.getTiles()[col - 1][row].isSolid()) {
+				if (fullness >= 2) {
 					water(col - 1, row, map, fullness - 1);
+				} else {
+					water(col - 1, row, map, fullness);
 				}
 			}
 		}
-
-        
 	}
-
-
 
 	public void draw(Graphics g) {
 	   	g.translate((int) -camera.getX(), (int) -camera.getY());
@@ -329,8 +334,7 @@ public class Level {
 	   		camera.draw(g);
 		}
 		g.translate((int) +camera.getX(), (int) +camera.getY());
-	    }
-
+	    }   
 
 	// --------------------------Die-Listener
 	public void throwPlayerDieEvent() {
