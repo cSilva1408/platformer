@@ -258,24 +258,26 @@ public class Level {
 			water(col, row + 1, map, 0);
 
 		} else {
-			if (fullness == 0 && row - 1 > 0 && (map.getTiles()[col][row - 1] instanceof Water)) {
+			if (row + 1 < map.getTiles()[0].length) {
+				if (fullness == 0 && row - 1 > 0 && (map.getTiles()[col][row - 1] instanceof Water)) {
 				water(col, row, map, 3);
-			}
-			// if we can’t go down go left and right
-			// right
-			if (col + 1 < map.getTiles().length && !(map.getTiles()[col + 1][row] instanceof Water) && !map.getTiles()[col + 1][row].isSolid()) {
-				if (fullness >= 2) {
-					water(col + 1, row, map, fullness - 1);
-				} else {
-					water(col + 1, row, map, fullness);
 				}
-			}
-			// left
-			if (col - 1 > 0 && !(map.getTiles()[col - 1][row] instanceof Water) && !map.getTiles()[col - 1][row].isSolid()) {
-				if (fullness >= 2) {
-					water(col - 1, row, map, fullness - 1);
-				} else {
-					water(col - 1, row, map, fullness);
+				// if we can’t go down go left and right
+				// right
+				if (col + 1 < map.getTiles().length-1 && !(map.getTiles()[col + 1][row] instanceof Water) && !map.getTiles()[col + 1][row].isSolid()) {
+					if (fullness >= 2) {
+						water(col + 1, row, map, fullness - 1);
+					} else {
+						water(col + 1, row, map, fullness);
+					}
+				}
+				// left
+				if (col - 1 > 0 && !(map.getTiles()[col - 1][row] instanceof Water) && !map.getTiles()[col - 1][row].isSolid()) {
+					if (fullness >= 2) {
+						water(col - 1, row, map, fullness - 1);
+					} else {
+						water(col - 1, row, map, fullness);
+					}
 				}
 			}
 		}
